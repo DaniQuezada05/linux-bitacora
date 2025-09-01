@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login con Canvas</title>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: Arial, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #222;
+    }
+
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: -1; /* para que quede detrás del formulario */
+    }
+
+    .login-box {
+      background: rgba(255, 255, 255, 0.9);
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      width: 300px;
+      text-align: center;
+    }
+
+    .login-box h2 {
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    .login-box input {
+      width: 90%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #aaa;
+      border-radius: 8px;
+    }
+
+    .login-box button {
+      margin-top: 10px;
+      padding: 10px;
+      width: 100%;
+      background: #4CAF50;
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .login-box button:hover {
+      background: #45a049;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="fondo"></canvas>
+
+  <div class="login-box">
+    <h2>Iniciar Sesión</h2>
+    <form>
+      <input type="text" placeholder="Usuario" required><br>
+      <input type="password" placeholder="Contraseña" required><br>
+      <button type="submit">Entrar</button>
+    </form>
+  </div>
+
+  <script>
+    const canvas = document.getElementById("fondo");
+    const ctx = canvas.getContext("2d");
+
+    // Ajustar tamaño del canvas a la ventana
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    // Dibujar partículas animadas
+    let particles = [];
+
+    function Particle(x, y, dx, dy, radius) {
+      this.x = x;
+      this.y = y;
+      this.dx = dx;
+      this.dy = dy;
+      this.radius = radius;
+
+      this.draw = function() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
+        ctx.fillStyle = "rgba(0, 200, 255, 0.6)";
+        ctx.fill();
+        ctx.closePath();
+      };
+
+      this.update = function() {
+        if (this.x + this.radius > canvas.width || this.x - this.radius < 0) {
+          this.dx = -this.dx;
+        }
+        if (this.y + this.radius > canvas.height || this.y - this.radius < 0) {
+          this.dy = -this.dy;
+        }
+        this.x += this.dx;
+        this.y += this.dy;
+        this.draw();
+      };
+    }
+
+    function init() {
+      particles = [];
+      for (let i = 0; i < 50; i++) {
+        let radius = Math.random() * 5 + 2;
+        let x = Math.random() * (canvas.width - radius * 2) + radius;
+        let y = Math.random() * (canvas.height - radius * 2) + radius;
+        let dx = (Math.random() - 0.5) * 2;
+        let dy = (Math.random() - 0.5) * 2;
+        particles.push(new Particle(x, y, dx, dy, radius));
+      }
+    }
